@@ -3,34 +3,42 @@ package com.example.compose
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.compose.ui.theme.ComposeTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            Row(
-                modifier = Modifier.background(Color.Gray).fillMaxSize(),
-                horizontalArrangement = Arrangement.SpaceAround,
-                verticalAlignment = Alignment.CenterVertically
-            ){
-                Text(text = "Hello")
-                Text(text = "Girona")
-                Text(text = "Madrid")
+            val navController = rememberNavController() //контроллер
+
+            NavHost( //контейнер
+                navController = navController,
+                startDestination = "screen_1" //экран, который будет открыт по умолчанию
+            ) {
+                composable("screen_1"){ //запуск экрана
+                    Screen1 {
+                        navController.navigate("screen_2")
+                    }
+                }
+                composable("screen_2"){//запуск экрана
+                    Screen2 {
+                        navController.navigate("screen_3")
+                    }
+                }
+                composable("screen_3"){//запуск экрана
+                    Screen3 {
+                        navController.navigate("screen_1"){
+                            popUpTo("screen_1"){//оставить в стеке screen_1, а остальные удалить (чтобы при нажатии на кнопку Назад вернуться сначала к screen_1, а потом выйти из приложения)
+                                inclusive = true //убирает из стека screen_1, т.е. сразу при нажатии на кнопку Назад можно выйти из приложения
+                            }
+                        }
+                    }
+                }
             }
+
         }
     }
 }
